@@ -1,0 +1,75 @@
+AndroidManifest.xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+	<application android:allowBackup="true" android:icon="@mipmap/appicon" android:roundIcon="@mipmap/appicon_round" android:supportsRtl="true"></application>
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+	<uses-permission android:name="android.permission.INTERNET" />
+	<queries>
+		<intent>
+			<action android:name="android.intent.action.DIAL" />
+			<data android:scheme="tel"/>
+		</intent>
+	</queries>
+
+</manifest>
+
+
+MainPage.xml
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MauiPhone.MainPage">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16">
+            <Entry Placeholder="Enter Phone Number" x:Name="PhoneNum"/>
+            <Button Text="Dial" Clicked="OnDial" x:Name="DialBtn"/>
+       
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>
+
+MainPage.xml.cs
+
+using System;
+using Microsoft.Maui.Controls;
+using System.Text.RegularExpressions;
+
+namespace MauiPhone;
+
+public partial class MainPage : ContentPage
+{
+	int count = 0;
+
+	public MainPage()
+	{
+		InitializeComponent();
+	}
+
+	private async void OnDial(object sender, EventArgs e)
+	{
+		try
+		{
+			string phonenumber = PhoneNum.Text.Trim();
+			string phonepattern = @"^\d{11}$";
+
+			if (Regex.IsMatch(phonenumber, phonepattern))
+			{
+				PhoneDialer.Open(phonenumber);
+			}
+			else
+			{
+				await DisplayAlert("Invalid Input", "please enter valid number", "ok");
+			}
+		}
+		catch(Exception ex)
+		{
+			await DisplayAlert("Error", ex.Message, "ok");
+
+		}
+		
+	}
+}
+
